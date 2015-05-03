@@ -1,0 +1,24 @@
+{
+  "name": "pipes_filters",
+  "version": "1.0.0",
+  "description": "This is a project for Scalable Web Architectures class at University of Applied Science Salzburg.",
+  "main": "pipe.js",
+  "dependencies": {
+    "amqplib": "^0.3.1",
+    "when": "^3.7.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrilehner90/RabbitMQ_Pipes_Filters.git"
+  },
+  "author": "Christian Lehner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chrilehner90/RabbitMQ_Pipes_Filters/issues"
+  },
+  "homepage": "https://github.com/chrilehner90/RabbitMQ_Pipes_Filters"
+}
