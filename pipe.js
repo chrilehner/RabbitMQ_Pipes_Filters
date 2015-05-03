@@ -42,4 +42,7 @@ channelPromise.then(function(channel) {
 	var filter = new Filter();
 	var pipe = new Pipe(channel, "pipe", "Test", filter);
 	pipe.start()
+}).catch(function(e) {
+	console.log(e);
+	process.exit(1);
 });
