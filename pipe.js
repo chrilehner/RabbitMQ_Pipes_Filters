@@ -47,36 +47,3 @@ channelPromise.then(function(channel) {
 	var pipe = new Pipe(channel, "pipe", "Test", filter);
 	pipe.start()
 });
-
-
-
-
-// amqp.connect('amqp://localhost').then(function(connection) {
-// 	return when(connection.createChannel().then(function(channel) {
-
-// 		var ok = channel.assertQueue(queueName, {durable: false});
-
-// 		var ok = ok.then(function() {
-// 			channel.publish('', serverName, new Buffer(msg), {
-// 				"replyTo": queueName,
-// 				"correlationId": "1"
-// 			});
-// 			console.log("Request '%s'", msg);
-			
-// 		});
-
-// 		ok = ok.then(function() {
-// 			return channel.consume(queueName, processMessages, {noAck: true})
-// 		});
-
-// 		return ok.then(function(_consumeOk) {
-// 		});
-
-// 		function processMessages(msg) {
-// 			console.log("Response: ", msg.content.toString());
-// 			//return channel.close();
-// 			//channel.ack(msg);
-// 		}
-
-// 	})).ensure(function() { connection.close(); });
-// }).then(null, console.warn);
