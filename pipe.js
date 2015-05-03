@@ -9,10 +9,6 @@ var Pipe = function(channel, from, to, filter) {
 	var filter = filter;
 	var that = this;
 
-
-// für jedes from und to eigene queues?
-// das erste mal muss der filter selbst aufgerufen und eine nachricht verschickt werden
-
 	var pipe = function(message) {
 		console.log("handle message");
 		var result = filter.process();
