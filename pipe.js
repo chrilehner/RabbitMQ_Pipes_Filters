@@ -1,6 +1,8 @@
 var channelPromise = require('./rabbitmq_connect.js');
-var Filter = require('./filter.js');
+var ConcatenationFilter = require('./filter.js').ConcatenationFilter;
+var SearchFilter = require('./filter.js').SearchFilter;
 
+// ToDo: multiple Filters
 
 var Pipe = function(channel, from, to, filter) {
 	var channel = channel;
@@ -10,7 +12,6 @@ var Pipe = function(channel, from, to, filter) {
 	var that = this;
 
 	var pipe = function(message) {
-		console.log("handle message");
 		var result = filter.process();
 		channel.ack(message);
 
@@ -25,7 +26,8 @@ var Pipe = function(channel, from, to, filter) {
 		channel.consume(from, pipe);
 		
 		// start first filter
-		var msg = filter.process();
+		var msg = filter.process("Hello", "world");
+		console.log(msg)
 
 		// queueName, message
 		channel.sendToQueue(from, new Buffer(msg));
@@ -39,7 +41,7 @@ var Pipe = function(channel, from, to, filter) {
 
 
 channelPromise.then(function(channel) {
-	var filter = new Filter();
+	var filter = new ConcatenationFilter();
 	var pipe = new Pipe(channel, "pipe", "Test", filter);
 	pipe.start()
 }).catch(function(e) {

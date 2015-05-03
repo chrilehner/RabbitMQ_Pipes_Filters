@@ -1,7 +1,7 @@
-var Filter = function() {
+var ConcatenationFilter = function() {
 
-	var process = function() {
-		return "Message processed";
+	var process = function(text, otherText) {
+		return text + " " + otherText;
 	}
 
 	return {
@@ -9,4 +9,18 @@ var Filter = function() {
 	}
 }
 
-module.exports = Filter;
+var SearchFilter = function() {
+	var process = function(needle, haystack) {
+		return haystack.indexOf(needle);
+	}
+
+	return {
+		process: process
+	}
+}
+
+module.exports = {
+	ConcatenationFilter: ConcatenationFilter,
+	SearchFilter: SearchFilter
+}
+
