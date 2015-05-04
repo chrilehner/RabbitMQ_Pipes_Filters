@@ -15,8 +15,7 @@ var Pipe = function(channel, from, to, filters) {
 	var pipe = function(message) {
 		var msg = message.content.toString();
 
-		console.log("Msg:", msg);
-		console.log("Type:", filters[0].getType());
+		console.log(colors.yellow("Msg:"), msg);
 
 		filters[0].setResult(msg);
 
@@ -65,6 +64,11 @@ var filters = [
 	new ReplaceFilter("...", "!")
 ];
 
+console.log("Steps:");
+for(var i in filters) {
+	console.log("\t", i + ":", filters[i].getDescription());
+}
+console.log("----------------");
 channelPromise.then(function(channel) {
 	var pipe = new Pipe(channel, "pipe", "Test", filters);
 	pipe.start()
