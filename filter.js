@@ -6,8 +6,13 @@ var ConcatenationFilter = function(text, otherText) {
 		return text + " " + otherText;
 	}
 
+	var getDescription = function() {
+		return "Concatenate two words (e.g. 'Hello' and 'World...')";
+	}
+
 	return {
-		process: process
+		process: process,
+		getDescription: getDescription
 	}
 }
 
@@ -22,14 +27,14 @@ var LowerCaseFilter = function() {
 		result = previousResult;
 	}
 
-	var getType = function() {
-		return "LowerCaseFilter";
+	var getDescription = function() {
+		return "Transform to lower case";
 	}
 
 	return {
 		process: process,
 		setResult: setResult,
-		getType: getType
+		getDescription: getDescription
 	}
 }
 
@@ -47,14 +52,14 @@ var ReplaceFilter = function(replace, replaceWith) {
 		//console.log("new result:", result);
 	}
 
-	var getType = function() {
-		return "ReplaceFilter";
+	var getDescription = function() {
+		return "Replace a substring with another (e.g. replace '...' with '!')";
 	}
 
 	return {
 		process: process,
 		setResult: setResult,
-		getType: getType
+		getDescription: getDescription
 	}
 }
 
