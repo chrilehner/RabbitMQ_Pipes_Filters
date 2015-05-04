@@ -1,33 +1,54 @@
+var colors = require('colors/safe');
+
 var channelPromise = require('./rabbitmq_connect.js');
 var ConcatenationFilter = require('./filter.js').ConcatenationFilter;
-var SearchFilter = require('./filter.js').SearchFilter;
+var LowerCaseFilter = require('./filter.js').LowerCaseFilter;
+var ReplaceFilter = require('./filter.js').ReplaceFilter;
 
-// ToDo: multiple Filters
 
-var Pipe = function(channel, from, to, filter) {
+var Pipe = function(channel, from, to, filters) {
 	var channel = channel;
 	var from = from;
 	var to = to;
-	var filter = filter;
-	var that = this;
+	var filters = filters;
 
 	var pipe = function(message) {
-		var result = filter.process();
+		var msg = message.content.toString();
+
+		console.log("Msg:", msg);
+		console.log("Type:", filters[0].getType());
+
+		filters[0].setResult(msg);
+
+		var result = filters[0].process();
+
+		// remove processed filter
+		filters.shift();
+
+
 		channel.ack(message);
 
-		console.log(result)
+		if(filters.length > 0) {
+			filters[0].setResult(result);
+			channel.sendToQueue(from, new Buffer(result));	
+		}
+		else {
+			console.log(colors.green("Final result: "), result);
+			// TODO: close connection
+		}
 	}
 
 
 	var start = function() {
 		channel.assertQueue(from, { durable: true });
 
-		// noAck: false
+		// queueName, callback function; noAck: false (default)
 		channel.consume(from, pipe);
 		
 		// start first filter
-		var msg = filter.process("Hello", "world");
-		console.log(msg)
+		var msg = filters[0].process();
+
+		filters.shift();
 
 		// queueName, message
 		channel.sendToQueue(from, new Buffer(msg));
@@ -38,11 +59,14 @@ var Pipe = function(channel, from, to, filter) {
 	}
 };
 
-
+var filters = [
+	new ConcatenationFilter("Hello", "World..."),
+	new LowerCaseFilter(),
+	new ReplaceFilter("...", "!")
+];
 
 channelPromise.then(function(channel) {
-	var filter = new ConcatenationFilter();
-	var pipe = new Pipe(channel, "pipe", "Test", filter);
+	var pipe = new Pipe(channel, "pipe", "Test", filters);
 	pipe.start()
 }).catch(function(e) {
 	console.log(e);
