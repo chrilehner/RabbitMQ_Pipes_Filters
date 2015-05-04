@@ -12,6 +12,7 @@ var Pipe = function(channel, from, to, filters) {
 	var to = to;
 	var filters = filters;
 
+	// consuming callback function
 	var pipe = function(message) {
 		var msg = message.content.toString();
 
@@ -47,9 +48,10 @@ var Pipe = function(channel, from, to, filters) {
 		// start first filter
 		var msg = filters[0].process();
 
+		// remove first processed filter
 		filters.shift();
 
-		// queueName, message
+		// send message with first result
 		channel.sendToQueue(from, new Buffer(msg));
 	}
 
@@ -64,11 +66,14 @@ var filters = [
 	new ReplaceFilter("...", "!")
 ];
 
+// print descriptions to verify result
 console.log("Steps:");
 for(var i in filters) {
 	console.log("\t", i + ":", filters[i].getDescription());
 }
 console.log("----------------");
+
+// start after channel is ready
 channelPromise.then(function(channel) {
 	var pipe = new Pipe(channel, "pipe", "Test", filters);
 	pipe.start()
