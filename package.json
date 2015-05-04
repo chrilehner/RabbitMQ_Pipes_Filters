@@ -5,6 +5,7 @@
   "main": "pipe.js",
   "dependencies": {
     "amqplib": "^0.3.1",
+    "colors": "^1.1.0",
     "when": "^3.7.3"
   },
   "devDependencies": {},
