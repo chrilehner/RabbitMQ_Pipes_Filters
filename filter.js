@@ -1,6 +1,8 @@
-var ConcatenationFilter = function() {
+var ConcatenationFilter = function(text, otherText) {
+	var text = text;
+	var otherText = otherText;
 
-	var process = function(text, otherText) {
+	var process = function() {
 		return text + " " + otherText;
 	}
 
@@ -9,18 +11,56 @@ var ConcatenationFilter = function() {
 	}
 }
 
-var SearchFilter = function() {
-	var process = function(needle, haystack) {
-		return haystack.indexOf(needle);
+var LowerCaseFilter = function() {
+	var result = undefined;
+
+	var process = function() {
+		return result.toLowerCase();
+	}
+
+	var setResult = function(previousResult) {
+		result = previousResult;
+	}
+
+	var getType = function() {
+		return "LowerCaseFilter";
 	}
 
 	return {
-		process: process
+		process: process,
+		setResult: setResult,
+		getType: getType
+	}
+}
+
+var ReplaceFilter = function(replace, replaceWith) {
+	var replace = replace;
+	var replaceWith = replaceWith;
+	var result = undefined;
+
+	var process = function() {
+		return result.replace(replace, replaceWith);
+	}
+
+	var setResult = function(previousResult) {
+		result = previousResult;
+		//console.log("new result:", result);
+	}
+
+	var getType = function() {
+		return "ReplaceFilter";
+	}
+
+	return {
+		process: process,
+		setResult: setResult,
+		getType: getType
 	}
 }
 
 module.exports = {
 	ConcatenationFilter: ConcatenationFilter,
-	SearchFilter: SearchFilter
+	LowerCaseFilter: LowerCaseFilter,
+	ReplaceFilter: ReplaceFilter
 }
 
