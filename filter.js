@@ -23,7 +23,7 @@ var LowerCaseFilter = function() {
 		return result.toLowerCase();
 	}
 
-	var setResult = function(previousResult) {
+	var setInput = function(previousResult) {
 		result = previousResult;
 	}
 
@@ -33,7 +33,7 @@ var LowerCaseFilter = function() {
 
 	return {
 		process: process,
-		setResult: setResult,
+		setInput: setInput,
 		getDescription: getDescription
 	}
 }
@@ -47,7 +47,7 @@ var ReplaceFilter = function(replace, replaceWith) {
 		return result.replace(replace, replaceWith);
 	}
 
-	var setResult = function(previousResult) {
+	var setInput = function(previousResult) {
 		result = previousResult;
 		//console.log("new result:", result);
 	}
@@ -58,7 +58,7 @@ var ReplaceFilter = function(replace, replaceWith) {
 
 	return {
 		process: process,
-		setResult: setResult,
+		setInput: setInput,
 		getDescription: getDescription
 	}
 }
