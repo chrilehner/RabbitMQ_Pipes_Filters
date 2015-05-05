@@ -1,15 +1,15 @@
 var colors = require('colors/safe');
 
-var channelPromise = require('./rabbitmq_connect.js');
+var rabbitmqPromise = require('./rabbitmq_connect.js');
 var ConcatenationFilter = require('./filter.js').ConcatenationFilter;
 var LowerCaseFilter = require('./filter.js').LowerCaseFilter;
 var ReplaceFilter = require('./filter.js').ReplaceFilter;
 
 
-var Pipe = function(channel, from, to, filters) {
+var Pipe = function(connection, channel, queueName, filters) {
+	var connection = connection;
 	var channel = channel;
-	var from = from;
-	var to = to;
+	var queueName = queueName;
 	var filters = filters;
 
 	// consuming callback function
@@ -18,7 +18,7 @@ var Pipe = function(channel, from, to, filters) {
 
 		console.log(colors.yellow("Msg:"), msg);
 
-		filters[0].setResult(msg);
+		filters[0].setInput(msg);
 
 		var result = filters[0].process();
 
@@ -27,23 +27,21 @@ var Pipe = function(channel, from, to, filters) {
 
 
 		channel.ack(message);
-
 		if(filters.length > 0) {
-			filters[0].setResult(result);
-			channel.sendToQueue(from, new Buffer(result));	
+			filters[0].setInput(result);
+			channel.sendToQueue(queueName, new Buffer(result));	
 		}
 		else {
-			console.log(colors.green("Final result: "), result);
-			// TODO: close connection
+			console.log(colors.green("Final result:"), result);
 		}
 	}
 
 
 	var start = function() {
-		channel.assertQueue(from, { durable: true });
+		channel.assertQueue(queueName, { durable: true });
 
 		// queueName, callback function; noAck: false (default)
-		channel.consume(from, pipe);
+		channel.consume(queueName, pipe);
 		
 		// start first filter
 		var msg = filters[0].process();
@@ -52,7 +50,7 @@ var Pipe = function(channel, from, to, filters) {
 		filters.shift();
 
 		// send message with first result
-		channel.sendToQueue(from, new Buffer(msg));
+		channel.sendToQueue(queueName, new Buffer(msg));
 	}
 
 	return {
@@ -73,11 +71,10 @@ for(var i in filters) {
 }
 console.log("----------------");
 
-// start after channel is ready
-channelPromise.then(function(channel) {
-	var pipe = new Pipe(channel, "pipe", "Test", filters);
+rabbitmqPromise.then(function(rabbitmq_connection) {
+	var pipe = new Pipe(rabbitmq_connection.connection, rabbitmq_connection.channel, "pipe", filters);
 	pipe.start()
 }).catch(function(e) {
-	console.log(e);
+	console.error(colors.red(e));
 	process.exit(1);
 });
