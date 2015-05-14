@@ -25,10 +25,11 @@ var Pipe = function(connection, channel, queueName, filters) {
 		// remove processed filter
 		filters.shift();
 
-
+		// acknowledge message
 		channel.ack(message);
 		if(filters.length > 0) {
 			filters[0].setInput(result);
+			// send new message to queue
 			channel.sendToQueue(queueName, new Buffer(result));	
 		}
 		else {
@@ -38,6 +39,8 @@ var Pipe = function(connection, channel, queueName, filters) {
 
 
 	var start = function() {
+		// durable true to survive broker restarts (not necessarily needed but the queue doesn't have to be created every time the broker restarts)
+		// exclusive and auto_delete set to false by default (not needed)
 		channel.assertQueue(queueName, { durable: true });
 
 		// queueName, callback function; noAck: false (default)
