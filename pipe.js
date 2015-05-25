@@ -1,59 +1,47 @@
+/*
+TODO:
+ - funktioniert noch nicht, weil anfangs der neue filter noch nicht auf die queue hört - messages gehen verloren!
+ - autoDelete option löschen
+
+
+*/
+
+
+
 var colors = require('colors/safe');
 
-var rabbitmqPromise = require('./rabbitmq_connect.js');
-var ConcatenationFilter = require('./filter.js').ConcatenationFilter;
-var LowerCaseFilter = require('./filter.js').LowerCaseFilter;
-var ReplaceFilter = require('./filter.js').ReplaceFilter;
-
-
-var Pipe = function(connection, channel, queueName, filters) {
-	var connection = connection;
+var Pipe = function(channel, from, to, filter) {
 	var channel = channel;
-	var queueName = queueName;
-	var filters = filters;
+	var from = from;
+	var to = to;
+	var filter = filter;
 
 	// consuming callback function
-	var pipe = function(message) {
+	var handleMsg = function(message) {
 		var msg = message.content.toString();
 
 		console.log(colors.yellow("Msg:"), msg);
 
-		filters[0].setInput(msg);
-
-		var result = filters[0].process();
-
-		// remove processed filter
-		filters.shift();
+		var newMessage = filter.process(msg);
 
 		// acknowledge message
 		channel.ack(message);
-		if(filters.length > 0) {
-			filters[0].setInput(result);
-			// send new message to queue
-			channel.sendToQueue(queueName, new Buffer(result));	
-		}
-		else {
-			console.log(colors.green("Final result:"), result);
-		}
+		channel.publish(to, '', new Buffer(newMessage));
 	}
 
 
 	var start = function() {
+		channel.assertExchange(to, 'direct', { durable: false, autoDelete: true });
+
 		// durable true to survive broker restarts (not necessarily needed but the queue doesn't have to be created every time the broker restarts)
 		// exclusive and auto_delete set to false by default (not needed)
-		channel.assertQueue(queueName, { durable: true });
+		channel.assertQueue(from, { durable: false, autoDelete: true });
+
+		channel.bindQueue(from, from);
 
 		// queueName, callback function; noAck: false (default)
-		channel.consume(queueName, pipe);
-		
-		// start first filter
-		var msg = filters[0].process();
-
-		// remove first processed filter
-		filters.shift();
-
-		// send message with first result
-		channel.sendToQueue(queueName, new Buffer(msg));
+		channel.consume(from, handleMsg);
+		console.log("PIPE");
 	}
 
 	return {
@@ -61,23 +49,4 @@ var Pipe = function(connection, channel, queueName, filters) {
 	}
 };
 
-var filters = [
-	new ConcatenationFilter("Hello", "World..."),
-	new LowerCaseFilter(),
-	new ReplaceFilter("...", "!")
-];
-
-// print descriptions to verify result
-console.log("Steps:");
-for(var i in filters) {
-	console.log("\t", i + ":", filters[i].getDescription());
-}
-console.log("----------------");
-
-rabbitmqPromise.then(function(rabbitmq_connection) {
-	var pipe = new Pipe(rabbitmq_connection.connection, rabbitmq_connection.channel, "pipe", filters);
-	pipe.start()
-}).catch(function(e) {
-	console.error(colors.red(e));
-	process.exit(1);
-});
+module.exports = Pipe;

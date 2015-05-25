@@ -5,15 +5,14 @@ var Pipe = require('../pipe.js');
 
 var config = yaml.parse(fs.readFileSync('config.yml').toString());
 
-var LowerCaseFilter = function() {
+var ReverseFilter = function() {
 
 	var process = function(msg) {
-		console.log("MSG:", msg);
-		return msg.toLowerCase();
+		return msg.split("").reverse().join("");
 	}
 
 	var getDescription = function() {
-		return "Transform to lower case";
+		return "Reverse a string(e.g. 'hello world!' -> !)";
 	}
 
 	return {
@@ -22,18 +21,17 @@ var LowerCaseFilter = function() {
 	}
 }
 
-var filter = new LowerCaseFilter();
+var filter = new ReverseFilter();
 
 amqp.connect('amqp://localhost').then(function(connection) {
 	return connection;
 }).then(function(connection) {
 	return connection.createChannel();
 }).then(function(channel) {
-	var pipe = new Pipe(channel, config.lower_case.from, config.lower_case.to, filter);
+	var pipe = new Pipe(channel, config.reverse.from, config.reverse.to, filter);
 	pipe.start();
 }).catch(function(e) {
 	console.error(e);
 });
 
-
-module.exports = LowerCaseFilter;
+module.exports = ReverseFilter;
