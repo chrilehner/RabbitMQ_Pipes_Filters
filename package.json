@@ -10,7 +10,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node pipes_filters.js",
+    "start": "node main.js",
     "rabbitmq": "rabbitmq-server -detached"
   },
   "repository": {
