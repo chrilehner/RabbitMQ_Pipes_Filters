@@ -11,27 +11,24 @@ var ReverseFilter = function() {
 		return msg.split("").reverse().join("");
 	}
 
-	var getDescription = function() {
-		return "Reverse a string(e.g. 'hello world!' -> !)";
-	}
-
 	return {
-		process: process,
-		getDescription: getDescription
+		process: process
 	}
 }
 
-var filter = new ReverseFilter();
 
-amqp.connect('amqp://localhost').then(function(connection) {
-	return connection;
-}).then(function(connection) {
-	return connection.createChannel();
-}).then(function(channel) {
-	var pipe = new Pipe(channel, config.reverse.from, config.reverse.to, filter);
-	pipe.start();
-}).catch(function(e) {
-	console.error(e);
-});
+ReverseFilter.connect = function() {
+	var filter = new ReverseFilter();
+	return amqp.connect('amqp://localhost').then(function(connection) {
+		return connection;
+	}).then(function(connection) {
+		return connection.createChannel();
+	}).then(function(channel) {
+		var pipe = new Pipe(channel, config.reverse.from, config.reverse.to, filter);
+		return pipe.start();
+	}).catch(function(e) {
+		console.error(e);
+	});
+}
 
 module.exports = ReverseFilter;
