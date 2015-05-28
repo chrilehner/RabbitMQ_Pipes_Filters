@@ -1,13 +1,3 @@
-/*
-TODO:
- - funktioniert noch nicht, weil anfangs der neue filter noch nicht auf die queue hört - messages gehen verloren!
- - autoDelete option löschen
-
-
-*/
-
-
-
 var colors = require('colors/safe');
 
 var Pipe = function(channel, from, to, filter) {
@@ -31,17 +21,17 @@ var Pipe = function(channel, from, to, filter) {
 
 
 	var start = function() {
-		channel.assertExchange(to, 'direct', { durable: false, autoDelete: true });
+		channel.assertExchange(from, 'direct', { durable: true });
 
 		// durable true to survive broker restarts (not necessarily needed but the queue doesn't have to be created every time the broker restarts)
 		// exclusive and auto_delete set to false by default (not needed)
-		channel.assertQueue(from, { durable: false, autoDelete: true });
+		channel.assertQueue(from, { durable: true });
 
 		channel.bindQueue(from, from);
 
 		// queueName, callback function; noAck: false (default)
-		channel.consume(from, handleMsg);
-		console.log("PIPE");
+		var promise = channel.consume(from, handleMsg);
+		return promise;
 	}
 
 	return {
