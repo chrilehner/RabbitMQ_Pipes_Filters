@@ -11,7 +11,8 @@
   "devDependencies": {},
   "scripts": {
     "start": "node main.js",
-    "rabbitmq": "rabbitmq-server -detached"
+    "rabbit": "rabbitmq-server -detached",
+    "stop": "rabbitmqctl stop"
   },
   "repository": {
     "type": "git",
