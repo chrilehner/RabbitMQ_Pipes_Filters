@@ -5,8 +5,6 @@ var colors = require('colors/safe');
 
 
 var config = yaml.parse(fs.readFileSync('config.yml').toString());
-
-console.log("Result:", config);
 var result = config.result.from;
 
 amqp.connect('amqp://localhost').then(function(connection) {
@@ -14,11 +12,11 @@ amqp.connect('amqp://localhost').then(function(connection) {
 }).then(function(connection) {
 	return connection.createChannel();
 }).then(function(channel) {
-	channel.assertExchange(result, 'direct', { durable: false, autoDelete: true });
+	channel.assertExchange(result, 'direct', { durable: true });
 
 	// durable true to survive broker restarts (not necessarily needed but the queue doesn't have to be created every time the broker restarts)
 	// exclusive and auto_delete set to false by default (not needed)
-	channel.assertQueue(result, { durable: false, autoDelete: true });
+	channel.assertQueue(result, { durable: true });
 
 	channel.bindQueue(result, result);
 
@@ -30,7 +28,7 @@ amqp.connect('amqp://localhost').then(function(connection) {
 	}
 
 	// queueName, callback function; noAck: false (default)
-	channel.consume(result, handleMsg);
+	return channel.consume(result, handleMsg);
 }).catch(function(e) {
 	console.error(e);
 });
