@@ -54,6 +54,11 @@
     "to": "result",
     "filter": "ReverseFilter"
   },
+  "reverse2": {
+    "from": "reverse",
+    "to": "result",
+    "filter": "ReverseFilter"
+  },
   "result": {
     "from": "result"
   }
