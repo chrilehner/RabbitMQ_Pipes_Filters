@@ -18,23 +18,25 @@ var Pipe = function(channel, from, to, filter) {
 
 		// acknowledge message
 		channel.ack(message);
+
+		// exchange, routing key, message
 		channel.publish(to, '', new Buffer(newMessage));
 	}
 
 
 	var start = function() {
-		// console.log("FROM", from);
+		// durable: true, internal: false, autoDelete: false, alternateExchange: ""
 		channel.assertExchange(from, 'direct', { durable: true });
 
-		// durable true to survive broker restarts (not necessarily needed but the queue doesn't have to be created every time the broker restarts)
-		// exclusive and auto_delete set to false by default (not needed)
+		// exclusive: false, durable: true, autoDelete: false
 		channel.assertQueue(from, { durable: true });
 
 		channel.bindQueue(from, from);
 
+		// limit unacknowledged messages to 1 per channel (1 filter processes one message at a time)
 		channel.prefetch(1);
 
-		// queueName, callback function; noAck: false (default)
+		//  get promise for channel to consume when it's ready and return to rabbitmq_connect.js
 		var promise = channel.consume(from, handleMsg);
 		return promise;
 	}
