@@ -1,0 +1,60 @@
+{
+  "lower_case": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case2": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case3": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case4": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case5": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case6": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case7": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case8": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case9": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "lower_case10": {
+    "from": "lower_case",
+    "to": "reverse",
+    "filter": "LowerCaseFilter"
+  },
+  "reverse": {
+    "from": "reverse",
+    "to": "result",
+    "filter": "ReverseFilter"
+  },
+  "result": {
+    "from": "result"
+  }
+}
