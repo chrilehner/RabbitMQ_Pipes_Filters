@@ -1,4 +1,3 @@
-var amqp = require('amqplib');
 var Q = require('q');
 var resultConsumer = require('./result.js');
 var rabbitmq_connect = require('./rabbitmq_connect.js');
