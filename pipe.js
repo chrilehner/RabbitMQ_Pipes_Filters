@@ -9,6 +9,8 @@ var Pipe = function(channel, from, to, filter) {
 	// consuming callback function
 	var handleMsg = function(message) {
 		var msg = message.content.toString();
+		console.log("GOT MSG FROM", from);
+		console.log("Filter to process message", filter.getFilterType(), filter.getFilterID());
 
 		console.log(colors.yellow("Msg:"), msg);
 
@@ -21,6 +23,7 @@ var Pipe = function(channel, from, to, filter) {
 
 
 	var start = function() {
+		// console.log("FROM", from);
 		channel.assertExchange(from, 'direct', { durable: true });
 
 		// durable true to survive broker restarts (not necessarily needed but the queue doesn't have to be created every time the broker restarts)
@@ -28,6 +31,8 @@ var Pipe = function(channel, from, to, filter) {
 		channel.assertQueue(from, { durable: true });
 
 		channel.bindQueue(from, from);
+
+		channel.prefetch(1);
 
 		// queueName, callback function; noAck: false (default)
 		var promise = channel.consume(from, handleMsg);
