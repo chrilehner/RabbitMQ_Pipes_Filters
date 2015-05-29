@@ -1,21 +1,40 @@
-var fs = require('fs');
-var yaml = require('yamljs')
 var amqp = require('amqplib');
 var Q = require('q');
 var resultConsumer = require('./result.js');
+var rabbitmq_connect = require('./rabbitmq_connect.js');
+var colors = require('colors/safe');
+var config = require('./config.json');
 
-var config = yaml.parse(fs.readFileSync('config.yml').toString());
-
+var filters = [];
 var connections = [];
-for(var i in config) {
+var i = 0;
+for(var attribute in config) {
 	// require configured filters
-	if(config[i].from !== "result") {
+	if(config[attribute].from !== "result") {
 		// save promises returned from the channel.consume function
-		connections.push(require('./filters/' + config[i].filter + '.js').connect());
+		try {
+			filters.push(require('./filters/' + config[attribute].filter + '.js'));
+
+			var filter = new filters[i]();
+			filter.setFilterID(i);
+
+			connections.push(rabbitmq_connect(filter, config[attribute].from, config[attribute].to));
+		}
+		catch(e) {
+			console.error(e.stack);
+			console.log(colors.yellow("Please change the config to use existing filters or implement the new one."));
+			process.exit(1);
+		}
+		
+		
 	}
+	i++;
 }
 
 // send first message after every filter is ready to consume
 Q.all(connections).then(function() {
 	var startFilters = require('./start_filters.js');	
+}).catch(function(e) {
+	console.error(e);
+	console.error(e.stack);
 });
