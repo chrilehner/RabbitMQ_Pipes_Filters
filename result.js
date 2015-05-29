@@ -1,10 +1,7 @@
-var fs = require('fs');
-var yaml = require('yamljs')
 var amqp = require('amqplib');
 var colors = require('colors/safe');
+var config = require('./config.json');
 
-
-var config = yaml.parse(fs.readFileSync('config.yml').toString());
 var result = config.result.from;
 
 amqp.connect('amqp://localhost').then(function(connection) {
