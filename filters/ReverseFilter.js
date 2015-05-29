@@ -1,5 +1,3 @@
-var config = require('../config.json');
-
 var ReverseFilter = function() {
 
 	var id = 0;

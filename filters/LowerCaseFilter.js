@@ -1,5 +1,3 @@
-var config = require('../config.json');
-
 var LowerCaseFilter = function() {
 
 	var id = 0;
