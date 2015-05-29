@@ -1,15 +1,18 @@
 var amqp = require('amqplib');
-var when = require('when');
+var Pipe = require('./pipe.js');
 
-var deferred = when.defer();
-amqp.connect('amqp://localhost').then(function(connection) {
-	connection.createChannel().then(function(channel) {
-		var rabbitmq_connection = {
-			"connection": connection,
-			"channel": channel
-		}
-		deferred.resolve(rabbitmq_connection);
+var connect = function(filter, from, to) {
+	//console.log(filter.getFilterType());
+	return amqp.connect('amqp://localhost').then(function(connection) {
+		return connection;
+	}).then(function(connection) {
+		return connection.createChannel();
+	}).then(function(channel) {
+		var pipe = new Pipe(channel, from, to, filter);
+		return pipe.start();
+	}).catch(function(e) {
+		console.error(e);
 	});
-});
+}
 
-module.exports = deferred.promise;
+module.exports = connect;
