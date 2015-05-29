@@ -1,8 +1,8 @@
 var amqp = require('amqplib');
 var Pipe = require('./pipe.js');
 
+// this function returns a promise for each filter (which is returned by the pipe) to the code in main.js
 var connect = function(filter, from, to) {
-	//console.log(filter.getFilterType());
 	return amqp.connect('amqp://localhost').then(function(connection) {
 		return connection;
 	}).then(function(connection) {
