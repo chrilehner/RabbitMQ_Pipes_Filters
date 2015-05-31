@@ -10,17 +10,23 @@ var Pipe = function(channel, from, to, filter) {
 	var handleMsg = function(message) {
 		var msg = message.content.toString();
 		console.log("GOT MSG FROM", from);
-		console.log("Filter to process message", filter.getFilterType(), filter.getFilterID());
 
-		console.log(colors.yellow("Msg:"), msg);
 
-		var newMessage = filter.process(msg);
+		if(filter && to) {
+			console.log("Filter to process message:", filter.getFilterType(), filter.getFilterID());
+
+			console.log(colors.yellow("Msg:"), msg);
+			var newMessage = filter.process(msg);
+
+			// exchange, routing key, message
+			channel.publish(to, '', new Buffer(newMessage));
+		}
+		else {
+			console.log(colors.green("Final result:"), msg);
+		}
 
 		// acknowledge message
 		channel.ack(message);
-
-		// exchange, routing key, message
-		channel.publish(to, '', new Buffer(newMessage));
 	}
 
 

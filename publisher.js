@@ -13,7 +13,7 @@ amqp.connect('amqp://localhost').then(function(connection) {
 
 	channel.bindQueue(firstFilter, firstFilter);
 
-	for(var i = 0; i < 10000; i++) {
+	for(var i = 0; i < 50; i++) {
 		channel.publish(firstFilter, '', new Buffer("!DLROW OLLEH"));
 	}
 

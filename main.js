@@ -32,7 +32,7 @@ for(var attribute in config) {
 
 // send first message after every filter is ready to consume
 Q.all(connections).then(function() {
-	var startFilters = require('./start_filters.js');	
+	var startFilters = require('./publisher.js');	
 }).catch(function(e) {
 	console.error(e);
 	console.error(e.stack);
