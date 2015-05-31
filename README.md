@@ -9,6 +9,9 @@ Make sure you have RabbitMQ installed.
 - Clone repository
 - ```npm install```
 - ```npm run rabbit```
-- ```npm run start```
+- ```npm start```
+
+## Help
+- ``npm start help```
 
 Used AMQP package: https://github.com/squaremo/amqp.node.
