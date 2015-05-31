@@ -6,4 +6,13 @@ var config = require('./config.json');
 
 var result = config.result.from;
 
-rabbitmq_connect(undefined, config.result.from, undefined);
+
+var initializeConsumer = function(from) {
+	if(from) {
+		console.log("FROM:", from);
+		return rabbitmq_connect(undefined, from, undefined);
+	}
+	return rabbitmq_connect(undefined, config.result.from, undefined);
+}
+
+module.exports = initializeConsumer;
